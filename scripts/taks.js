@@ -16,6 +16,7 @@ window.addEventListener('load', function () {
     const token = localStorage.getItem("token");
     obtenerNombreUsuario()
     consultarTareas()
+    
 
 
 
@@ -68,9 +69,9 @@ window.addEventListener('load', function () {
       fetch("https://todo-api.ctd.academy/v1/tasks", settings)
         .then(res => res.json())
         .then(tareas => {
-          renderizarTareas(tareas);
+          renderizarTareas(tareas);  
           botonesCambioEstado(tareas);
-          botonBorrarTarea(tareas);
+          botonBorrarTarea(tareas)        
         })
         .catch()
     };
@@ -101,7 +102,7 @@ window.addEventListener('load', function () {
       fetch("https://todo-api.ctd.academy/v1/tasks", settings)
         .then(res => res.json())
         .then(tarea => {
-          consultarTareas(tarea);
+          consultarTareas();
           formCrearTarea.reset();
         })
         .catch()
@@ -112,7 +113,6 @@ window.addEventListener('load', function () {
     /* -------------------------------------------------------------------------- */
     function renderizarTareas(listado) {
       const cantidadFinalizadas = document.querySelector("#cantidad-finalizadas");
-
       let contador = 0;
       tareasTerminadas.innerHTML = "";
       tareasPendientes.innerHTML = "";
@@ -122,7 +122,7 @@ window.addEventListener('load', function () {
           tareasTerminadas.innerHTML += `<li class=tarea ><button class=cambios-estados id=${tarea.id} type="button"><span class=hecha><i class="fa-regular fa-circle-check"></i></span></button><div class="descripcion"><span class="nombre">${tarea.description}</span><button type="button" class="incompleta" id=BtnTareaIncompleta${tarea.id}><i class="fa-solid fa-rotate-left"></i></button><button type="button" class="borrar" id=btnTareaborrada${tarea.id}><i class="fa-regular fa-trash-can"></i></button></div></li>`
         } else tareasPendientes.innerHTML += `<li class=tarea ><button class=cambios-estados id=${tarea.id} type="button"><i class="fa-regular fa-circle"></i></button><div class="descripcion"><span class=nombre>${tarea.description}</span><span class=timestamp>${tarea.createdAt.split("T")[0].replaceAll('-', '/')}</span></span></div></li>`
       });
-      cantidadFinalizadas.innerHTML = contador;
+      cantidadFinalizadas.innerHTML = contador;      
     };
 
     /* -------------------------------------------------------------------------- */
@@ -147,10 +147,14 @@ window.addEventListener('load', function () {
           }
           fetch("https://todo-api.ctd.academy/v1/tasks/" + tareaLocal.id, settings)
             .then(res => res.json())
-            .then(tarea => consultarTareas(listado))
+            .then(tarea => {              
+              consultarTareas()})
         });
       });
     };
+
+
+    
 
 
 
@@ -162,13 +166,17 @@ window.addEventListener('load', function () {
       const btnBorrarTarea = document.querySelectorAll(".borrar")
       btnBorrarTarea.forEach(boton => {
         boton.addEventListener('click', () => {
-          listado.forEach(tarea => tarea.id == boton.id.split(/[A-Za-z]+/).join("") ? eliminarTareaDelete(listado, tarea.id) : "")
-
+          listado.forEach(tarea => {
+            if(tarea.id == boton.id.split(/[A-Za-z]+/).join("")){              
+              eliminarTareaDelete(listado, tarea.id);  
+              mostrarModal();            
+            }
+          })            
         })
       })
     }
 
-    function eliminarTareaDelete(listado, tareaId) {
+    function eliminarTareaDelete(listado, tareaId) {      
       const setting = {
         method: 'DELETE',
         headers: {
@@ -180,8 +188,29 @@ window.addEventListener('load', function () {
 
       fetch("https://todo-api.ctd.academy/v1/tasks/" + tareaId, setting)
         .then(res => res.json())
-        .then(respuesta => consultarTareas(listado))
+        .then(respuesta => {  
+          console.log("delente");                           
+          consultarTareas()
+          console.log("renderizo");
+          })
     }
+
+    function mostrarModal(){            
+      formCrearTarea.innerHTML += `<div id="ventanaModal" class="modal">
+      <div class="modal-content">          
+          <h2>TAREA ELIMINADA</h2>
+          <p>se elimino la tarea seleccionada</p>          
+      </div>
+    </div>`
+    
+    const modal = document.querySelector("#ventanaModal");  
+    // Hace referencia al elemento <span> que tiene la X que cierra la ventana
+    setTimeout(() => {
+      modal.remove();      
+    }, 2000);    
+    }
+
+    
   }else{
     alert("DEBES ESTAR LOGUEADO")
     location.replace("./index.html")

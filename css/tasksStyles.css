@@ -236,3 +236,37 @@ footer {
 footer img {
     height: 100%;
 }
+/*-------Estilos modal -----------*/
+.modal {    
+    position: fixed; /* Posición fija */
+    
+    z-index: 1; /* Se situará por encima de otros elementos de la página*/
+    padding-top: 200px; /* El contenido estará situado a 200px de la parte superior */
+    left: 0;
+    top: 0;
+    width: 100%; /* Ancho completo */
+    height: 100%; /* Algura completa */
+    overflow: auto; /* Se activará el scroll si es necesario */
+    background-color: rgba(0,0,0,0.5); /* Color negro con opacidad del 50% */
+}
+
+.modal-content {
+    display: block;
+    position: relative; /* Relativo con respecto al contenedor -modal- */    
+    text-align: center;
+    padding: 20px;
+    width: 100%;
+    -webkit-animation-name: animatetop;
+    -webkit-animation-duration: 0.5s;
+    animation-name: animatetop;
+    animation-duration: 0.5s        
+}
+
+@-webkit-keyframes animatetop {
+    from {top:-300px; opacity:0} 
+    to {top:0; opacity:1}
+}
+@keyframes animarsuperior {
+    from {top:-300px; opacity:0}
+    to {top:0; opacity:1}
+}
